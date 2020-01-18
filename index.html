@@ -44,7 +44,6 @@
     computed:{
 
         currentSentence(){
-            const currentTime = new Date().getTime()
             const numberOfTyped = this.typedSentence.length
             const restSentence = this.questions.typeSentence.slice(numberOfTyped)
             return `${restSentence}`
@@ -63,11 +62,13 @@
                     if(this.typedSentence === this.questions.typeSentence){
                         this.correctNumber++  
                         this.typedSentence=''
+                        getTimer();
                         if(this.correctNumber >= 10){
                             this.level++
                             this.wpm = this.wpm + 50
                             return this.correctNumber = 0
                             return typedSentence
+                            getTimer();
                         }
                     }
                     return this.correctNumber
@@ -77,9 +78,6 @@
                     }
     },
     methods: {
-        startHand(){
-            showQuiz()
-        },
             getTimer(){
             const lengthOfSentence = this.questions.typeSentence.length
             if( this.level < 10){
@@ -90,19 +88,14 @@
             if(this.defaultTimer < 0){　
                 this.defaultTimer = 0
                             clearTimeout(id);　//idをclearTimeoutで指定している
-            }
-        }
+                    }
+                }
                 countdown();
              return this.defaultTimer
-            }
-
-   
-    }
- 
+                    }
+           }
                 }
-            
-            }
-        )
+            })
 </script>
 
 
