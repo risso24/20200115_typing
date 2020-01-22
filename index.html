@@ -40,11 +40,12 @@
           <div class="div-type-sentence">
             <span id="target">{{typedSentence}}</span>{{ currentSentence }}
           </div>
-          <textarea
-            v-model="typedSentence"
-            @type="correctCheck()"
+          <textarea 
+            v-model="typedSentence" 
+            @type="correctCheck()" 
             id="startText"
-          ></textarea>
+            >
+          </textarea>
         </div>
       </div>
     </div>
@@ -66,7 +67,6 @@
       firebase.analytics();
       // Firebaseの導入②　ここまで
 
-<<<<<<< HEAD
       new Vue({
         el: "#typeGame",
         data: {
@@ -91,16 +91,9 @@
               "atamagaitakunattekimasita(sudeniitaidesu)",
               "taima-bubunnakirameteiidesuka?",
               "mougannbatta.gannbattayo."
-
             ]
           },
           typedSentence: ""
-=======
-        currentSentence(){
-            const numberOfTyped = this.typedSentence.length
-            const restSentence = this.questions.typeSentence.slice(numberOfTyped)
-            return `${restSentence}`
->>>>>>> 174d6fd06ae516c91d70624ab86d433850dad117
         },
         computed: {
           currentSentence() {
@@ -120,35 +113,18 @@
               document.getElementById("target").style.color = "red";
             }
 
-<<<<<<< HEAD
             //正解したら正解数アップ&10問正解でレベルアップ
             if (this.typedSentence === this.questions.typeSentence[this.quizNumber]) {
-              if (this.correctNumber < 9){
-              this.correctNumber++;
-            } else {
-                this.level++;
+              if (this.correctNumber >= 9)
+              { this.level++;
                 this.wpm = this.wpm + 30;
                 this.correctNumber = 0;
-              }
+              } else {
+              this.correctNumber++;
+            }
               this.countTimer();
             }
             return this.correctNumber;
-          }
-          
-        },
-        methods: {
-          resetQuiz() {
-            this.typedSentence = "";
-            const newQuizNumber = Math.floor(
-              Math.random() * this.questions.typeSentence.length
-            );
-            this.quizNumber = newQuizNumber;
-          },
-          getTimer() {
-            const lengthOfSentence = this.questions.typeSentence[this.quizNumber].length;
-              this.defaultTimer = (
-                lengthOfSentence * (60 / this.wpm)
-              ).toFixed();
           },
           countTimer() {
             document.getElementById('startText').focus();
@@ -167,53 +143,24 @@
             countdown();
             this.defaultTimer;
           }
+          
+        },
+        methods: {
+          resetQuiz() {
+            this.typedSentence = "";
+            const newQuizNumber = Math.floor(
+              Math.random() * this.questions.typeSentence.length
+            );
+            this.quizNumber = newQuizNumber;
+          },
+          getTimer() {
+            const lengthOfSentence = this.questions.typeSentence[this.quizNumber].length;
+              this.defaultTimer = (
+                lengthOfSentence * (60 / this.wpm)
+              ).toFixed();
+          }
         }
       });
     </script>
   </body>
 </html>
-=======
-            //正解したら正解数アップ&10問正解でレベルアップ    
-                    if(this.typedSentence === this.questions.typeSentence){
-                        this.correctNumber++  
-                        this.typedSentence=''
-                        getTimer();
-                        if(this.correctNumber >= 10){
-                            this.level++
-                            this.wpm = this.wpm + 50
-                            return this.correctNumber = 0
-                            return typedSentence
-                            getTimer();
-                        }
-                    }
-                    return this.correctNumber
-                    return this.level
-                    return this.wpm 
-
-                    }
-    },
-    methods: {
-            getTimer(){
-            const lengthOfSentence = this.questions.typeSentence.length
-            if( this.level < 10){
-                this.defaultTimer =  (lengthOfSentence*(60/this.wpm)).toFixed(); 
-                const countdown = () =>{
-                this.defaultTimer--
-                const id = setTimeout(countdown, 1000);
-            if(this.defaultTimer < 0){　
-                this.defaultTimer = 0
-                            clearTimeout(id);　//idをclearTimeoutで指定している
-                    }
-                }
-                countdown();
-             return this.defaultTimer
-                    }
-           }
-                }
-            })
-</script>
-
-
-</body>
-</html>
->>>>>>> 174d6fd06ae516c91d70624ab86d433850dad117
