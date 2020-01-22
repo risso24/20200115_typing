@@ -20,16 +20,15 @@
 
     <div id="typeGame">
       <div class="button-space">
-        <button @click="countTimer()">ゲームを開始する</button>
+        <button @click="getTimer()">ゲームを開始する</button>
       </div>
-      <div class="quiz" >
+      <div class="quiz">
         <div class="sub-info">
           <div class="div-level">Level : {{level}}</div>
           <div class="sub-info-present">
             <div class="div-correct-number">
               現在の問題正解数：<span v-text="correctCheck"></span>/10
             </div>
-            <div class="div-timer">WPM : {{ wpm }}</div>
             <div class="div-timer">残り{{ defaultTimer }}秒</div>
           </div>
         </div>
@@ -69,28 +68,24 @@
       new Vue({
         el: "#typeGame",
         data: {
+          startDisplay: false,
           correctNumber: 0,
           level: 1,
           defaultTimer: "",
           wpm: 100,
-          quizNumber: 0,
+          quizNumber: 1,
           questions: {
             quizSentence: [
-              "私はタイピングゲームを作ります!",
-              "タイマー部分の挙動がおかしくなっていきます。",
+              "私はタイピングゲームを作ります",
+              "タイマー部分が独立してて機能していません",
               "えっ、これ、このあと分岐作るんですか？？",
-              "頭が痛くなってきました（すでに痛いです）",
-              "タイマー部分諦めていいですか？",
-              "もう頑張った。頑張ったよ。"
+              "頭が痛くなってきました（すでに痛いです）"
             ],
             typeSentence: [
-              "watasihataipinnguge-muwotukurimasu!",
-              "taima-bubunnnokyodougaokasikunatteikimasu.",
+              "watasihataipinnguge-muwotukurimasu",
+              "taima-bubunngadokuritusitetekinousiteimasenn",
               "eltu,kore,konoatobunnkitukurunndesuka??",
-              "atamagaitakunattekimasita(sudeniitaidesu)",
-              "taima-bubunnakirameteiidesuka?",
-              "mougannbatta.gannbattayo."
-
+              "atamagaitakunattekimasita(sudeniitaidesu)"
             ]
           },
           typedSentence: ""
@@ -113,51 +108,47 @@
               document.getElementById("target").style.color = "red";
             }
 
+            if (this.defaultTimer <= 0) {
+              this.getTimer();
+            } else {
             //正解したら正解数アップ&10問正解でレベルアップ
             if (this.typedSentence === this.questions.typeSentence[this.quizNumber]) {
-              if (this.correctNumber < 9){
               this.correctNumber++;
-            } else {
+              this.getTimer();
+              if (this.correctNumber >= 10) {
                 this.level++;
-                this.wpm = this.wpm + 30;
+                this.wpm = this.wpm + 50;
                 this.correctNumber = 0;
               }
-              this.countTimer();
-            }
+            }}
             return this.correctNumber;
           }
-          
         },
         methods: {
-          resetQuiz() {
+          getTimer() {
             this.typedSentence = "";
             const newQuizNumber = Math.floor(
               Math.random() * this.questions.typeSentence.length
             );
             this.quizNumber = newQuizNumber;
-          },
-          getTimer() {
             const lengthOfSentence = this.questions.typeSentence[this.quizNumber].length;
+            if (this.level < 10) {
               this.defaultTimer = (
-                lengthOfSentence * (60 / this.wpm)
+                lengthOfSentence *
+                (60 / this.wpm)
               ).toFixed();
-          },
-          countTimer() {
-            document.getElementById('startText').focus();
-            this.resetQuiz();
-            this.getTimer();
-            const countdown = () => {
+              const countdown = () => {
                 this.defaultTimer--;
                 const id = setTimeout(countdown, 1000);
+
                 if (this.defaultTimer < 0) {
+                  this.defaultTimer = 0;
                   clearTimeout(id); //idをclearTimeoutで指定している
-                  this.resetQuiz();
-                  this.getTimer();
-                  countdown();
                 }
-              }
-            countdown();
-            this.defaultTimer;
+              };
+              countdown();
+              return this.defaultTimer;
+            } 
           }
         }
       });
