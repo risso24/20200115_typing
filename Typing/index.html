@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,7 +22,7 @@
       <div class="button-space">
         <button @click="countTimer()">ゲームを開始する</button>
       </div>
-      <div class="quiz">
+      <div class="quiz" >
         <div class="sub-info">
           <div class="div-level">Level : {{level}}</div>
           <div class="sub-info-present">
@@ -41,9 +40,9 @@
           <div class="div-type-sentence">
             <span id="target">{{typedSentence}}</span>{{ currentSentence }}
           </div>
-          <textarea
-            v-model="typedSentence"
-            @type="correctCheck()"
+          <textarea 
+            v-model="typedSentence" 
+            @type="correctCheck()" 
             id="startText"
             >
           </textarea>
@@ -71,14 +70,11 @@
       new Vue({
         el: "#typeGame",
         data: {
-          display_button :true,
-          display_quiz: false,
           correctNumber: 0,
           level: 1,
           defaultTimer: "",
           wpm: 100,
           quizNumber: 0,
-          timers: [],
           questions: {
             quizSentence: [
               "私はタイピングゲームを作ります!",
@@ -100,7 +96,6 @@
           typedSentence: ""
         },
         computed: {
-          // 入力された文章/問題の文章切り替え
           currentSentence() {
             const numberOfTyped = this.typedSentence.length;
             const nowQuiz = this.questions.typeSentence[this.quizNumber];
@@ -123,17 +118,16 @@
               this.correctNumber++;
               if (this.correctNumber > 9)
               { this.level++;
-                this.wpm = this.wpm + 50;
+                this.wpm = this.wpm + 10;
                 this.correctNumber = 0;
             }
               this.countTimer();
             }
             return this.correctNumber;
           }
-
+          
         },
         methods: {
-          // クイズ（番号のリセット
           resetQuiz() {
             this.typedSentence = "";
             const newQuizNumber = Math.floor(
@@ -141,25 +135,19 @@
             );
             this.quizNumber = newQuizNumber;
           },
-          // 文字数に合わせて制限時間を変更
           getTimer() {
             const lengthOfSentence = this.questions.typeSentence[this.quizNumber].length;
               this.defaultTimer = Math.floor((
                 lengthOfSentence * (60 / this.wpm)
               ));
           },
-          // タイマーリセット
-          resetTimer() {
-            this.timers.map((timer) => clearTimeout(timer))
-            this.timers = []
-          },
           countTimer() {
-            this.resetTimer() // すでに登録済みのタイマーをリセット
             const countdown = () => {
                 this.defaultTimer--;
-                const timer = setTimeout(countdown, 1000);
-                this.timers.push(timer) // 登録したタイマーを保存
+                const id = setTimeout(countdown, 1000);
+                debugger
                 if (this.defaultTimer < 0) {
+                  clearTimeout(id); //idをclearTimeoutで指定している
                   this.resetQuiz();
                   this.getTimer();
                   countdown();
@@ -169,6 +157,7 @@
             this.resetQuiz();
             this.getTimer();
             countdown();
+
           }
         }
       });
