@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="style.css" />
-    <title>タイピングゲーム</title>
+    <link href="https://fonts.googleapis.com/css?family=Anton&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+       <title>タイピングゲーム</title>
   </head>
-  <body>
+  <body id="body">
     <!-- Firebaseの導入① -->
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
@@ -35,8 +37,8 @@
           </div>
         </div>
         <div class="sentence">
-          <div class="div-question">
-            {{ questions.quizSentence[quizNumber]}}
+          <div class="div-question" >
+            <span id="fontStyle">{{ currentQuizSentence }}</span>
           </div>
           <div class="div-type-sentence">
             <span id="target">{{typedSentence}}</span>{{ currentSentence }}
@@ -74,61 +76,128 @@
           display_button :true,
           display_quiz: false,
           correctNumber: 0,
+          currentQuizSentence: "",
           level: 1,
           defaultTimer: "",
           wpm: 100,
           quizNumber: 0,
           timers: [],
-          questions: {
-            quizSentence: [
-              "私はタイピングゲームを作ります!",
-              "タイマー部分の挙動がおかしくなっていきます。",
-              "えっ、これ、このあと分岐作るんですか？？",
-              "頭が痛くなってきました（すでに痛いです）",
-              "タイマー部分諦めていいですか？",
-              "もう頑張った。頑張ったよ。"
+          defaultFontColor: "red",
+          defaultBackgroundColor: "#fff",
+          defaultFontSize : "16px",
+          defaultFontFamily : "sans-serif",
+          typedSentence: "",
+          // 0: key, 1:value , 3:quizSentence, 4:typeSentence
+          questions: [
+            [
+            "font-size",
+              "30px",
+              "font-size: 30px;",
+              "font-size: 30px;"
             ],
-            typeSentence: [
-              "watasihataipinnguge-muwotukurimasu!",
-              "taima-bubunnnokyodougaokasikunatteikimasu.",
-              "eltu,kore,konoatobunnkitukurunndesuka??",
-              "atamagaitakunattekimasita(sudeniitaidesu)",
-              "taima-bubunnakirameteiidesuka?",
-              "mougannbatta.gannbattayo."
+            [
+            "font-size",
+              "50px",
+              "font-size: 50px;",
+              "font-size: 50px;"
+            ],
+            [
+            "font-size",
+              "10px",
+              "font-size: 10px;",
+              "font-size: 10px;"
+            ],
+
+            [
+            "font-family",
+            "Times New Roman",
+              "font-family: 'Times New Roman'",
+              "font-family: 'Times New Roman'"
+            ],
+            [  
+              "background-color",
+              "rgb(245, 181, 212)",
+              "background-color: rgb(245, 181, 212);",
+              "background-color: rgb(245, 181, 212);",
+            ],
+            ["font-family",
+            "'Anton', sans-serif",
+              "font-family: font-family: 'Anton', sans-serif;",
+              "font-family: font-family: 'Anton', sans-serif;"
+            ],
+            ["font-family",
+            "'Comfortaa', cursive",
+              "font-family: 'Comfortaa', cursive;",
+              "font-family: 'Comfortaa', cursive;",
+            ],
+            [  
+              "background-color",
+              "#fcf6ca",
+              "background-color: #fcf6ca;",
+              "background-color: #fcf6ca;",
+            ],
+            [  
+              "background-color",
+              "rgb(18, 119, 135)",
+              "background-color: rgb(18, 119, 135);",
+              "background-color: rgb(18, 119, 135);",
+             ],
+             [
+              "font-color",
+              "#24d633",
+              "color: #24d633;",
+              "color: #24d633;"
             ]
-          },
-          typedSentence: ""
+            ]   
         },
         computed: {
           // 入力された文章/問題の文章切り替え
           currentSentence() {
             const numberOfTyped = this.typedSentence.length;
-            const nowQuiz = this.questions.typeSentence[this.quizNumber];
+            const nowQuiz = this.questions[this.quizNumber][3];
             const restSentence = nowQuiz.slice(numberOfTyped);
             return restSentence;
+          },
+          changeElements() {
+            switch (this.questions[this.quizNumber][0]){
+              case "font-color":
+                this.defaultFontColor = this.questions[this.quizNumber][1];
+                document.getElementById("fontStyle").style.color = this.defaultFonColor
+              case "font-size":
+                this.defaultFontSize = this.questions[this.quizNumber][1];
+                document.getElementById("fontStyle").style.fontSize = this.defaultFontSize
+              case "background-color":
+                this.defaultBackgroundColor = this.questions[this.quizNumber][1];
+                document.getElementById("body").style.backgroundColor = this.defaultBackgroundColor;
+                document.getElementById("target").style.backgroundColor = this.defaultBackgroundColor;
+              case "font-family":
+                this.defaultFontFamily = this.questions[this.quizNumber][1]; 
+                document.getElementById("fontStyle").style.fontFamily = this.defaultFontFamily;
+            }
           },
           correctCheck() {
             const typedText = this.typedSentence.length;
             //タイプ間違えたら色が変わる
-            if (this.typedSentence !== this.questions.typeSentence[this.quizNumber].slice(0, typedText)) {
+            if (this.typedSentence !== this.questions[this.quizNumber][3].slice(0, typedText)) {
               document.getElementById("target").style.backgroundColor = "blue";
               document.getElementById("target").style.color = "#fff";
             } else {
-              document.getElementById("target").style.backgroundColor = "#fff";
               document.getElementById("target").style.color = "red";
+              document.getElementById("target").style.backgroundColor = this.defaultBackgroundColor;
             }
 
             //正解したら正解数アップ&10問正解でレベルアップ
-            if (this.typedSentence === this.questions.typeSentence[this.quizNumber]) {
+            if (this.typedSentence === this.questions[this.quizNumber][3]) {
               this.correctNumber++;
               if (this.correctNumber > 9)
               { this.level++;
                 this.wpm = this.wpm + 50;
                 this.correctNumber = 0;
             }
+              this.changeElements;
               this.countTimer();
             }
-            return this.correctNumber;
+            this.correctNumber;
           }
 
         },
@@ -137,13 +206,14 @@
           resetQuiz() {
             this.typedSentence = "";
             const newQuizNumber = Math.floor(
-              Math.random() * this.questions.typeSentence.length
+              Math.random() * this.questions.length
             );
             this.quizNumber = newQuizNumber;
+            this.currentQuizSentence = this.questions[newQuizNumber][2];
           },
           // 文字数に合わせて制限時間を変更
           getTimer() {
-            const lengthOfSentence = this.questions.typeSentence[this.quizNumber].length;
+            const lengthOfSentence = this.questions[this.quizNumber][3].length;
               this.defaultTimer = Math.floor((
                 lengthOfSentence * (60 / this.wpm)
               ));
