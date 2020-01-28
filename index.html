@@ -6,242 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="style.css" />
-    <link href="https://fonts.googleapis.com/css?family=Anton&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
-       <title>タイピングゲーム</title>
+    <title>タイピングゲーム</title>
   </head>
-  <body id="body">
-    <!-- Firebaseの導入① -->
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
-
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-            https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-analytics.js"></script>
-    <!-- Firebaseの導入①　ここまで -->
+  <body>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
-    <div id="typeGame">
+    <div id="typeGame" class="default" v-bind:style="{ 'background-color' : defaultBackgroundColor}">
       <div class="button-space">
-        <button @click="countTimer()">ゲームを開始する</button>
+        <button @click="startQuiz()" v-show="!display_button">ゲームを開始する</button>
       </div>
-      <div class="quiz">
+      <!-- v-show="!display_button"  -->
+      <div class="quiz" v-show="display_button">
         <div class="sub-info">
           <div class="div-level">Level : {{level}}</div>
           <div class="sub-info-present">
             <div class="div-correct-number">
-              現在の問題正解数：<span v-text="correctCheck"></span>/10
+              現在の問題正解数：<span v-text="correctCheck()"></span>/10
             </div>
             <div class="div-timer">WPM : {{ wpm }}</div>
             <div class="div-timer">残り{{ defaultTimer }}秒</div>
           </div>
         </div>
         <div class="sentence">
-          <div class="div-question" >
-            <span id="fontStyle">{{ currentQuizSentence }}</span>
+          <div class="div-question" v-bind:style="{color : defaultColor, 'font-size': defaultFontSize, 'font-family' : defaultFontFamily}">
+            {{ currentQuizSentence }}
           </div>
           <div class="div-type-sentence">
-            <span id="target">{{typedSentence}}</span>{{ currentSentence }}
+            <span id="target" v-bind:style="{ 'background-color' : defaultBackgroundColor}">{{typedSentence}}</span>{{ currentSentence }}
           </div>
-          <textarea
-            v-model="typedSentence"
-            @type="correctCheck()"
-            id="startText"
-            >
-          </textarea>
         </div>
       </div>
+      <textarea
+      id="startText"
+      v-model="typedSentence"
+      @type="correctCheck()"
+      >
+    </textarea>
     </div>
-    <script>
-      // Firebaseの導入②
-      // Your web app's Firebase configuration
-      var firebaseConfig = {
-        apiKey: "AIzaSyCXgYOSDrFt6t-HzxpdDeHtWgMQBcnzzZc",
-        authDomain: "typing-8e873.firebaseapp.com",
-        databaseURL: "https://typing-8e873.firebaseio.com",
-        projectId: "typing-8e873",
-        storageBucket: "typing-8e873.appspot.com",
-        messagingSenderId: "345313226622",
-        appId: "1:345313226622:web:b2c33ecd61b2f7e8c00d2f",
-        measurementId: "G-HBD9XSFC2Z"
-      };
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      firebase.analytics();
-      // Firebaseの導入②　ここまで
-
-      new Vue({
-        el: "#typeGame",
-        data: {
-          display_button :true,
-          display_quiz: false,
-          correctNumber: 0,
-          currentQuizSentence: "",
-          level: 1,
-          defaultTimer: "",
-          wpm: 100,
-          quizNumber: 0,
-          timers: [],
-          defaultFontColor: "red",
-          defaultBackgroundColor: "#fff",
-          defaultFontSize : "16px",
-          defaultFontFamily : "sans-serif",
-          typedSentence: "",
-          // 0: key, 1:value , 3:quizSentence, 4:typeSentence
-          questions: [
-            [
-            "font-size",
-              "30px",
-              "font-size: 30px;",
-              "font-size: 30px;"
-            ],
-            [
-            "font-size",
-              "50px",
-              "font-size: 50px;",
-              "font-size: 50px;"
-            ],
-            [
-            "font-size",
-              "10px",
-              "font-size: 10px;",
-              "font-size: 10px;"
-            ],
-
-            [
-            "font-family",
-            "Times New Roman",
-              "font-family: 'Times New Roman'",
-              "font-family: 'Times New Roman'"
-            ],
-            [  
-              "background-color",
-              "rgb(245, 181, 212)",
-              "background-color: rgb(245, 181, 212);",
-              "background-color: rgb(245, 181, 212);",
-            ],
-            ["font-family",
-            "'Anton', sans-serif",
-              "font-family: font-family: 'Anton', sans-serif;",
-              "font-family: font-family: 'Anton', sans-serif;"
-            ],
-            ["font-family",
-            "'Comfortaa', cursive",
-              "font-family: 'Comfortaa', cursive;",
-              "font-family: 'Comfortaa', cursive;",
-            ],
-            [  
-              "background-color",
-              "#fcf6ca",
-              "background-color: #fcf6ca;",
-              "background-color: #fcf6ca;",
-            ],
-            [  
-              "background-color",
-              "rgb(18, 119, 135)",
-              "background-color: rgb(18, 119, 135);",
-              "background-color: rgb(18, 119, 135);",
-             ],
-             [
-              "font-color",
-              "#24d633",
-              "color: #24d633;",
-              "color: #24d633;"
-            ]
-            ]   
-        },
-        computed: {
-          // 入力された文章/問題の文章切り替え
-          currentSentence() {
-            const numberOfTyped = this.typedSentence.length;
-            const nowQuiz = this.questions[this.quizNumber][3];
-            const restSentence = nowQuiz.slice(numberOfTyped);
-            return restSentence;
-          },
-          changeElements() {
-            switch (this.questions[this.quizNumber][0]){
-              case "font-color":
-                this.defaultFontColor = this.questions[this.quizNumber][1];
-                document.getElementById("fontStyle").style.color = this.defaultFonColor
-              case "font-size":
-                this.defaultFontSize = this.questions[this.quizNumber][1];
-                document.getElementById("fontStyle").style.fontSize = this.defaultFontSize
-              case "background-color":
-                this.defaultBackgroundColor = this.questions[this.quizNumber][1];
-                document.getElementById("body").style.backgroundColor = this.defaultBackgroundColor;
-                document.getElementById("target").style.backgroundColor = this.defaultBackgroundColor;
-              case "font-family":
-                this.defaultFontFamily = this.questions[this.quizNumber][1]; 
-                document.getElementById("fontStyle").style.fontFamily = this.defaultFontFamily;
-            }
-          },
-          correctCheck() {
-            const typedText = this.typedSentence.length;
-            //タイプ間違えたら色が変わる
-            if (this.typedSentence !== this.questions[this.quizNumber][3].slice(0, typedText)) {
-              document.getElementById("target").style.backgroundColor = "blue";
-              document.getElementById("target").style.color = "#fff";
-            } else {
-              document.getElementById("target").style.color = "red";
-              document.getElementById("target").style.backgroundColor = this.defaultBackgroundColor;
-            }
-
-            //正解したら正解数アップ&10問正解でレベルアップ
-            if (this.typedSentence === this.questions[this.quizNumber][3]) {
-              this.correctNumber++;
-              if (this.correctNumber > 9)
-              { this.level++;
-                this.wpm = this.wpm + 50;
-                this.correctNumber = 0;
-            }
-              this.changeElements;
-              this.countTimer();
-            }
-            this.correctNumber;
-          }
-
-        },
-        methods: {
-          // クイズ（番号のリセット
-          resetQuiz() {
-            this.typedSentence = "";
-            const newQuizNumber = Math.floor(
-              Math.random() * this.questions.length
-            );
-            this.quizNumber = newQuizNumber;
-            this.currentQuizSentence = this.questions[newQuizNumber][2];
-          },
-          // 文字数に合わせて制限時間を変更
-          getTimer() {
-            const lengthOfSentence = this.questions[this.quizNumber][3].length;
-              this.defaultTimer = Math.floor((
-                lengthOfSentence * (60 / this.wpm)
-              ));
-          },
-          // タイマーリセット
-          resetTimer() {
-            this.timers.map((timer) => clearTimeout(timer))
-            this.timers = []
-          },
-          countTimer() {
-            this.resetTimer() // すでに登録済みのタイマーをリセット
-            const countdown = () => {
-                this.defaultTimer--;
-                const timer = setTimeout(countdown, 1000);
-                this.timers.push(timer) // 登録したタイマーを保存
-                if (this.defaultTimer < 0) {
-                  this.resetQuiz();
-                  this.getTimer();
-                  countdown();
-                }
-              }
-            document.getElementById('startText').focus();
-            this.resetQuiz();
-            this.getTimer();
-            countdown();
-          }
-        }
-      });
-    </script>
+    <script src="vue.js"></script>
   </body>
 </html>

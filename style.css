@@ -1,4 +1,15 @@
-
+body{
+    margin:0;
+    padding:0;
+}
+.default{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    margin:0;
+    top:0;
+    left:0;
+}
 .button-space{
     display:block;
     width:300px;
@@ -52,11 +63,12 @@ button{
     width:25%;
 }
 .div-question{
-    font-size:3em;
+    padding-top: 40px;
 }
 .div-type-sentence{
     font-size:2em;
-    color:#2f2f2f;
+    color:#8f8f8f;
+    padding-top: 50px;
 }
 
 
@@ -70,3 +82,4 @@ textarea{
     color:#fff;
     border: 0px solid #fff;
 }
+
